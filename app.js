@@ -260,6 +260,16 @@ function triggerBlobDownload(blob, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+function openOriginalDirect(image) {
+  const link = document.createElement('a');
+  link.href = image.originalUrl;
+  link.target = '_blank';
+  link.rel = 'noopener';
+  document.body.append(link);
+  link.click();
+  link.remove();
+}
+
 async function fetchOriginal(image) {
   const response = await fetchWithTimeout(image.originalUrl, { mode: 'cors' }, 180000);
   if (!response.ok) {
@@ -271,11 +281,16 @@ async function fetchOriginal(image) {
 async function downloadOne(image) {
   if (!image) return;
   try {
-    setStatus(`Downloading ${image.name}…`);
-    const bytes = await fetchOriginal(image);
-    const blob = new Blob([bytes], { type: 'image/jpeg' });
-    triggerBlobDownload(blob, safeFileName(image.name, image.id, image.originalUrl));
-    setStatus(`Saved ${image.name}.`);
+    setStatus(`Starting download for ${image.name}…`);
+    const link = document.createElement('a');
+    link.href = image.originalUrl;
+    link.download = safeFileName(image.name, image.id, image.originalUrl);
+    link.target = '_blank';
+    link.rel = 'noopener';
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setStatus(`Download started for ${image.name}.`);
   } catch (error) {
     setStatus(error.message || String(error), true);
   }
@@ -567,7 +582,7 @@ zipButton.addEventListener('click', async () => {
     triggerBlobDownload(blob, 'fotoowl-originals.zip');
     setStatus(`ZIP ready with ${entries.length} original${entries.length === 1 ? '' : 's'}.`);
   } catch (error) {
-    setStatus(error.message || String(error), true);
+    setStatus(`ZIP failed: ${error.message || String(error)}. Use the individual Download buttons instead.`, true);
   } finally {
     zipButton.disabled = false;
   }
