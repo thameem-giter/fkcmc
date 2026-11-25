@@ -602,3 +602,14 @@ zipButton.addEventListener('click', async () => {
     zipButton.disabled = false;
   }
 });
+
+const sharedParams = new URLSearchParams(window.location.search);
+const sharedGallery = sharedParams.get('gallery') || sharedParams.get('url') || sharedParams.get('link');
+if (sharedGallery) {
+  input.value = sharedGallery;
+  if (typeof form.requestSubmit === 'function') {
+    form.requestSubmit();
+  } else {
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+  }
+}
