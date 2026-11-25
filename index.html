@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#e60023" />
+    <meta
+      name="description"
+      content="Pinterest-style static tool that finds and downloads unwatermarked original images from a FotoOwl gallery."
+    />
+    <title>Original Image Finder</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Original Image Finder home">
+        <span class="brand-mark">O</span>
+        <span class="brand-name">Original Finder</span>
+      </a>
+
+      <form id="scan-form" class="searchbar">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input
+          id="gallery-url"
+          name="gallery-url"
+          type="url"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Paste a FotoOwl gallery link"
+          required
+        />
+        <button type="submit" id="scan-button">Find</button>
+      </form>
+
+      <div class="top-actions">
+        <span class="chip">Static · GitHub Pages</span>
+      </div>
+    </header>
+
+    <main class="page">
+      <section id="intro" class="intro">
+        <div class="intro-copy">
+          <div class="eyebrow">FotoOwl original image finder</div>
+          <h1>Find the originals.<br />Not the watermark.</h1>
+          <p>
+            Paste a gallery link and this page pulls the full-resolution files straight from FotoOwl's
+            public metadata. No uploads, no captcha, no watermark removal service.
+          </p>
+        </div>
+        <div class="intro-art" aria-hidden="true">
+          <div class="art-card art-one"></div>
+          <div class="art-card art-two"></div>
+          <div class="art-card art-three"></div>
+          <div class="art-label">Originals · 6720px</div>
+        </div>
+      </section>
+
+      <div id="loader" class="loader" hidden aria-hidden="true">
+        <div class="loader-card"></div>
+        <div class="loader-card"></div>
+        <div class="loader-card"></div>
+        <div class="loader-card"></div>
+        <div class="loader-card"></div>
+        <div class="loader-card"></div>
+      </div>
+
+      <section id="results" class="results" hidden>
+        <div class="detail">
+          <div class="pin-media" id="hero-media">
+            <img id="hero-image" alt="" />
+            <div class="media-actions">
+              <button id="hero-view" class="round" type="button">Open original</button>
+              <button id="hero-download" class="round round-primary" type="button">Download</button>
+            </div>
+            <span class="media-badge">Original file</span>
+          </div>
+
+          <aside class="pin-details">
+            <div class="detail-top">
+              <button id="back-button" class="icon-btn" type="button" title="Back">←</button>
+              <div class="detail-top-right">
+                <button id="share-button" class="icon-btn" type="button" title="Copy gallery link">↗</button>
+                <button id="more-button" class="icon-btn" type="button" title="More info">•••</button>
+              </div>
+            </div>
+
+            <div class="source-row">
+              <span class="source-avatar">F</span>
+              <div>
+                <strong id="gallery-name">Gallery</strong>
+                <span id="gallery-meta">0 original images found</span>
+              </div>
+            </div>
+
+            <h2 id="hero-title">Image name</h2>
+            <p id="hero-dimensions" class="dimensions"></p>
+
+            <div class="action-stack">
+              <button id="detail-download" class="primary" type="button">Download original</button>
+              <button id="detail-copy" class="outline" type="button">Copy original URL</button>
+              <button id="zip-button" class="outline" type="button">Download all as ZIP</button>
+            </div>
+
+            <div class="info-card">
+              <strong>Source URL</strong>
+              <span id="hero-url" class="url"></span>
+            </div>
+          </aside>
+        </div>
+
+        <div class="more-section">
+          <div class="section-heading">
+            <h2>More from this gallery</h2>
+            <span id="count-badge" class="count-badge">0 images</span>
+          </div>
+          <div id="grid" class="masonry"></div>
+        </div>
+      </section>
+
+      <div id="status" class="status" role="status" aria-live="polite"></div>
+    </main>
+
+    <footer>
+      <p>Everything runs in your browser. No uploads, no server, no watermark-removal service.</p>
+      <p>Use only for galleries you own or are authorized to download.</p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
