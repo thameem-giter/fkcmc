@@ -90,6 +90,16 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 60000) {
   }
 }
 
+function withCacheBust(rawUrl, purpose) {
+  try {
+    const url = new URL(rawUrl);
+    url.searchParams.set(`fotoowl_${purpose}`, String(Date.now()));
+    return url.toString();
+  } catch {
+    return rawUrl;
+  }
+}
+
 function parseGalleryUrl(inputText) {
   if (typeof inputText !== 'string' || !inputText.trim()) {
     throw new Error('Paste a gallery link');
@@ -271,7 +281,10 @@ function openOriginalDirect(image) {
 }
 
 async function fetchOriginal(image) {
-  const response = await fetchWithTimeout(image.originalUrl, { mode: 'cors' }, 180000);
+  const response = await fetchWithTimeout(withCacheBust(image.originalUrl, 'zip'), {
+    mode: 'cors',
+    cache: 'no-store',
+  }, 180000);
   if (!response.ok) {
     throw new Error(`Download failed for ${image.name}: ${response.status}`);
   }
@@ -283,7 +296,7 @@ async function downloadOne(image) {
   try {
     setStatus(`Starting download for ${image.name}…`);
     const link = document.createElement('a');
-    link.href = image.originalUrl;
+    link.href = withCacheBust(image.originalUrl, 'download');
     link.download = safeFileName(image.name, image.id, image.originalUrl);
     link.target = '_blank';
     link.rel = 'noopener';
@@ -314,10 +327,12 @@ function selectImage(image) {
   heroImage.onerror = () => {
     if (image.previewUrl && heroImage.dataset.fallback !== '1') {
       heroImage.dataset.fallback = '1';
+      heroImage.crossOrigin = null;
       heroImage.src = image.previewUrl;
     }
   };
-  heroImage.src = image.originalUrl;
+  heroImage.crossOrigin = 'anonymous';
+  heroImage.src = withCacheBust(image.originalUrl, 'preview');
   heroImage.alt = image.name;
   heroImage.classList.remove('image-in');
   void heroImage.offsetWidth;
@@ -550,7 +565,7 @@ moreButton.addEventListener('click', () => {
 
 heroView.addEventListener('click', () => {
   if (!selectedImage) return;
-  window.open(selectedImage.originalUrl, '_blank', 'noopener');
+  window.open(withCacheBust(selectedImage.originalUrl, 'view'), '_blank', 'noopener');
 });
 
 heroDownload.addEventListener('click', () => downloadOne(selectedImage));
